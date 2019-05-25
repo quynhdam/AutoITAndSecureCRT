@@ -78,7 +78,7 @@ Func SaveMac($MAC)
 	Local $sTime = StringFormat("[%04d-%02d-%02d - %02d:%02d:%2d]", @YEAR, @MON, @MDAY, @HOUR, @MIN, @MSEC)
 	Local $sLog = StringFormat("%s %s" & @CRLF, $sTime, $MAC)
 	If $LogFile <> -1 Then
-		Local $LogWriteRes = FileWrite($FileMAC, $sLog &  @CRLF)
+		Local $LogWriteRes = FileWrite($FileMAC, $sLog)
 		If $LogWriteRes = 0 Then
 			TrayTip("Error", "Can not write MAC address to file " & $FileMAC, 0, 0)
 		Else
@@ -137,14 +137,18 @@ Func Get_Pass($sString)
 EndFunc
 
 Func Login($User, $Pass)
-	ShellExecute("C:\Users\QuynhDam\Downloads\SecureCRTPortable\App\SecureCRT\SecureCRT.exe", "/SCRIPT LoginAndSendCommand.vbs /SSH2  /ACCEPTHOSTKEYS /L admin /PASSWORD " & $Pass & " 192.168.1.1" )
-	$Pass = ""
+	ShellExecuteWait("C:\Users\QuynhDam\Downloads\SecureCRTPortable\App\SecureCRT\SecureCRT.exe", "/SCRIPT LoginAndSendCommand.vbs /SSH2  /ACCEPTHOSTKEYS /L admin /PASSWORD " & $Pass & " 192.168.1.1" )
+	WinWaitClose("192.168.1.1 - SecureCRT")
+	ConsoleWrite("SecureCRT is closed" &  @CRLF)
+	Local $File = FileOpen(@ScriptDir & "\Result.txt")
+	Local $Line = FileRead($File)
+	_Log($Line)
+	FileClose($File)
 	While Ping("192.168.1.1", 3000) 
-		Sleep(1000)
-		
+		Sleep(1000)	
 	Wend
-	WinClose("SecureCRT")
-	Send("{ENTER}")
+;~ 	WinClose("SecureCRT")
+;~ 	Send("{ENTER}")
 	TrayTip("RD", "SecureCRT closed", 0, 0)
 EndFunc
 

@@ -18,7 +18,6 @@ Sub Main
 	crt.Screen.WaitForString "ftp-gpon$"
 	crt.Screen.Send "retsh foxconn168!" & chr(13)
 	crt.Screen.WaitForString("# ")
-	crt.Screen.Send "echo =================================================================" & chr(13)
 	crt.Screen.Send "echo Time at testing: " & now() & chr(13)
 	crt.Screen.Send "cat /etc/mac.conf" & chr(13)
 	crt.Screen.Send "cat /etc/fwver.conf" & chr(13)
@@ -30,7 +29,6 @@ Sub Main
 	crt.Screen.Send "echo =================================================================" & chr(13)
 	crt.Screen.Send "echo Send command complete" & chr(13)
 	str = crt.Screen.ReadString("Send command complete")
-	crt.Screen.Send "echo " & str & chr(13)
 	array=Split(str,vbCrlf)
 	For Each line in array
 		crt.Screen.Send "echo " & line & Chr(13)
@@ -38,6 +36,17 @@ Sub Main
 			' crt.Screen.Send "echo " & line & Chr(13)
 			strRight = Right(line,2)
 			crt.Screen.Send "echo " & strRight & Chr(13)
+			
+			Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile(CurrentDirectory & "\ListMAC.txt",8,true)
+			objFileToWrite.WriteLine("============> cnt_counter: " & strRight & vbCrlf)
+			objFileToWrite.Close
+			Set objFileToWrite = Nothing
+			
+			Set objFileToWriteResult = CreateObject("Scripting.FileSystemObject").OpenTextFile(CurrentDirectory & "\Result.txt",2,true)
+			objFileToWriteResult.WriteLine("cnt_counter: " & strRight & Chr(13))
+			objFileToWriteResult.Close
+			Set objFileToWriteResult = Nothing
+			
 			If strRight = 0 then 
 				crt.Screen.Send "echo cnt_counter: " & strRight & Chr(13)
 				crt.Screen.Send "echo Checked" & Chr(13)
