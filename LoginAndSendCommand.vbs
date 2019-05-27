@@ -24,7 +24,7 @@ Sub Main
 	crt.Screen.Send "uptime" & chr(13)
 	crt.Screen.Send "cat /proc/kmsg &" & chr(13)
 	crt.Screen.Send "cat /proc/kmsg &" & chr(13)
-	crt.Sleep(500)
+	crt.Sleep(1000)
 	crt.Screen.Send "echo bip_cnt show > /proc/gpon/debug" & chr(13)
 	crt.Screen.Send "echo =================================================================" & chr(13)
 	crt.Screen.Send "echo Send command complete" & chr(13)

@@ -15,7 +15,7 @@
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 #include <WinAPIFiles.au3>
-
+#include <Debug.au3>
 Opt("WinTitleMatchMode", 2)
 
 HotKeySet("{ESC}", "Exitt")
@@ -34,7 +34,14 @@ Global $User = "admin"
 Global $g_sLogFilePath = "Log_" & @YEAR & "_" & @MON & "_" & @MDAY & ".log"
 Global $FileMAC = "ListMAC.txt"
 Global $sPass = ""
+Global $sMAC_ADDRESS = ""
+Global $data = ""
 While 1
+	$data = ""
+	$sPass = ""
+	$sMAC_ADDRESS = ""
+	$s = ""
+	ConsoleWrite("Pass=" & $sPass &  @CRLF)
 	_Log("=================================")
 	_Log("Start to check!!!!")
 	_Log("Waiting for connection from 192.168.1.1")
@@ -121,23 +128,24 @@ Func _Extract_MAC_FromARP($sString, $sIP = "192.168.1.1")
 EndFunc 
 	
 Func Get_Pass($sString)
-	Local $data = ""
-	ConsoleWrite($sString &  @CRLF)
+	Local $string = ""
+	ConsoleWrite("MAC addr: " & $sString &  @CRLF)
 	$string = StringSplit($sString, ":")
-	For $i = 1 To $string[0] 
-		$s &= $string[$i]   
+;~ 	_DebugArrayDisplay($string)
+	For $i = 1 To $string[0] 	
+		$s &= $string[$i]	  
     Next
-	ConsoleWrite($s & @CRLF)
+	ConsoleWrite("MAC add after cut: " & $s &  @CRLF)
 	ConsoleWrite(StringTrimLeft($s, 2) &  @CRLF) 
 	Local $str = StringUpper(StringTrimLeft($s, 2))
-	If StringLen($str)> 10 Then 
-		$data = StringTrimLeft($str, StringLen($str) - 10)
-	EndIf
-	Return $data
+;~ 	If StringLen($str)> 10 Then 
+;~ 		$data = StringTrimLeft($str, StringLen($str) - 10)
+;~ 	EndIf
+	Return $str
 EndFunc
 
 Func Login($User, $Pass)
-	ShellExecuteWait("C:\Users\QuynhDam\Downloads\SecureCRTPortable\App\SecureCRT\SecureCRT.exe", "/SCRIPT LoginAndSendCommand.vbs /SSH2  /ACCEPTHOSTKEYS /L admin /PASSWORD " & $Pass & " 192.168.1.1" )
+	ShellExecuteWait(@ScriptDir & "\SecureCRTPortable\App\SecureCRT\SecureCRT.exe", "/SCRIPT LoginAndSendCommand.vbs /SSH2  /ACCEPTHOSTKEYS /L admin /PASSWORD " & $Pass & " 192.168.1.1" )
 	WinWaitClose("192.168.1.1 - SecureCRT")
 	ConsoleWrite("SecureCRT is closed" &  @CRLF)
 	Local $File = FileOpen(@ScriptDir & "\Result.txt")
