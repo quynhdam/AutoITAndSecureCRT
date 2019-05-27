@@ -144,6 +144,7 @@ Func Login($User, $Pass)
 	Local $Line = FileRead($File)
 	_Log($Line)
 	FileClose($File)
+	FileDelete(@ScriptDir & "\Result.txt")
 	While Ping("192.168.1.1", 3000) 
 		Sleep(1000)	
 	Wend
