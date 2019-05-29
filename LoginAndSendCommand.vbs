@@ -6,6 +6,12 @@ CurrentDirectory = fso.GetAbsolutePathName(".")
 strFileName = CurrentDirectory & "\mysession.log"
 
 Sub Main
+	
+	Handle
+	
+End Sub
+
+Sub Handle
 	Dim str, line,array
 	crt.Screen.Synchronous = True
 	crt.Screen.IgnoreEscape = True
@@ -36,7 +42,12 @@ Sub Main
 			' crt.Screen.Send "echo " & line & Chr(13)
 			strRight = Right(line,2)
 			crt.Screen.Send "echo " & strRight & Chr(13)
-			
+			If strRight = 0 Then
+				
+			End If
+			If strRight <> 0 Then
+				strRight = Right(line,3)
+			End If
 			Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile(CurrentDirectory & "\ListMAC.txt",8,true)
 			objFileToWrite.WriteLine("============> cnt_counter: " & strRight & vbCrlf)
 			objFileToWrite.Close

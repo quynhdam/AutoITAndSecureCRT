@@ -22,7 +22,7 @@ HotKeySet("{ESC}", "Exitt")
 #Region ### START Koda GUI section ### Form=
 $Form = GUICreate("Automation Login Project", 491, 374, 307, 148)
 $Group = GUICtrlCreateGroup("User interface", 8, 8, 473, 353)
-$txtLog = GUICtrlCreateEdit("", 16, 24, 457, 297)
+$txtLog = GUICtrlCreateEdit("", 16, 24, 457, 297, $ES_READONLY, $ES_READONLY)
 GUICtrlSetData(-1, "")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $Label = GUICtrlCreateLabel("Author: Zelda", 400, 344, 68, 19)
@@ -54,21 +54,22 @@ While 1
 	Local $iPID = Run(@ComSpec & ' /C ' & 'arp -a', "", @SW_HIDE, $STDOUT_CHILD)
 	ProcessWaitClose($iPID)
 	$sMAC_ADDRESS = _Extract_MAC_FromARP(StdoutRead($iPID))
-;~ 	Local $result = CheckMAC($sMAC_ADDRESS)
-;~ 	If $result = 1 Then 
-;~ 		$answer = MsgBox(4, "", "This MAC address is checked. Do you want to re-check?")
-;~ 		_Log("This MAC address is checked")
-;~ 		If $answer = 6 Then 
-;~ 			_Log("Re-check MAC address " & $sMAC_ADDRESS)
-;~ 			Handle()
-;~ 		Else 
-;~ 			_Log("Not re-check MAC address " & $sMAC_ADDRESS) 
-;~ 		EndIf
-;~ 	EndIf
-;~ 	If $result = 0 Then 
+	Local $result = CheckMAC($sMAC_ADDRESS)
+	ConsoleWrite("$result: " & $result & @CRLF)
+	If $result = False Then 
+		$answer = MsgBox(4, "", "This MAC address is checked. Do you want to re-check?")
+		_Log("This MAC address is checked")
+		If $answer = 6 Then 
+			_Log("Re-check MAC address " & $sMAC_ADDRESS)
+			Handle()
+		Else 
+			_Log("Not re-check MAC address " & $sMAC_ADDRESS) 
+		EndIf
+	EndIf
+	If $result = True  Then 
 		SaveMac($sMAC_ADDRESS)
 		Handle()
-;~ 	EndIf
+	EndIf
 	Sleep(50)
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
@@ -186,12 +187,13 @@ Func Exitt()
 EndFunc
 
 Func CheckMAC($s)
-	$file = FileOpen("ListMAC.txt", 0)
+	$file = FileOpen($FileMAC, 0)
 	While 1
 		$line = FileReadLine($file)
 		If @error = -1 Then ExitLoop
-			if $line = $s Then 
-				$result = 1
+			if StringInStr($line, $s) Then 
+				ConsoleWrite("$line: " & $line & @CRLF)
+				Return $result = 1
 			Else 
 				$result = 0
 			EndIf
