@@ -40,32 +40,29 @@ Sub Handle
 		crt.Screen.Send "echo " & line & Chr(13)
 		If InStr(line,"total_bip_cnt_counter") then 
 			' crt.Screen.Send "echo " & line & Chr(13)
-			strRight = Right(line,2)
-			crt.Screen.Send "echo " & strRight & Chr(13)
-			If strRight = 0 Then
-				
-			End If
-			If strRight <> 0 Then
-				strRight = Right(line,3)
-			End If
+			a=Split(line, "=")
+			strRight = a(2)
+			strTrim=Trim(strRight)
+			Counter=CInt(strTrim)
+			crt.Screen.Send "echo " & Counter & Chr(13)
 			Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile(CurrentDirectory & "\ListMAC.txt",8,true)
-			objFileToWrite.WriteLine("============> cnt_counter: " & strRight & vbCrlf)
+			objFileToWrite.WriteLine("============> cnt_counter: " & Counter & vbCrlf)
 			objFileToWrite.Close
 			Set objFileToWrite = Nothing
 			
 			Set objFileToWriteResult = CreateObject("Scripting.FileSystemObject").OpenTextFile(CurrentDirectory & "\Result.txt",2,true)
-			objFileToWriteResult.WriteLine("cnt_counter: " & strRight & Chr(13))
+			objFileToWriteResult.WriteLine("cnt_counter: " & Counter & Chr(13))
 			objFileToWriteResult.Close
 			Set objFileToWriteResult = Nothing
 			
-			If strRight = 0 then 
-				crt.Screen.Send "echo cnt_counter: " & strRight & Chr(13)
+			If Counter = 0 then 
+				crt.Screen.Send "echo cnt_counter: " & Counter & Chr(13)
 				crt.Screen.Send "echo Checked" & Chr(13)
 				crt.Session.Disconnect	
 				crt.Quit
 			End If
-			If strRight <> 0 then
-				crt.Screen.Send "echo cnt_counter: " & strRight & Chr(13)
+			If Counter <> 0 then
+				crt.Screen.Send "echo cnt_counter: " & Counter & Chr(13)
 				result = crt.Dialog.MessageBox("cnt_counter is to max, this board fail!", "Error")
 				If result = IDOK Then
 					Exit For
